@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
 
+# Copyright 2020 Alexander van Gessel <ai0867@gmail.com>
+#
+# Conversion script for KNMI historical hourly measurements to projected
+#  climate-changed values.
+# Projection is done based on the difference KNMI's own daily climate
+#  projections and the historical daily values those are based on.
+# Only temperatures are converted.
+# This script was written to enable Vabi Elements to use KNMI's
+#  climate projections.
+
 UUR_IN="uurgeg_344_2001-2010.txt"
 DAG_ORIG="KNMI14____ref_tg___19810101-20101231_v3.2.txt"
 DAG_TRANS="KNMI14_WH_2050_tg___19810101-20101231_v3.2.txt"
