@@ -20,7 +20,7 @@ class Comparer:
     def __init__(self, original, transformed, station):
         self._data = {}
         self._load_data(original, transformed, station)
-    def get_diff(self, date):
+    def get_diff(self, date, _hour, *args):
         return self._data[date]
     def _load_data(self, original, transformed, station):
         """Doing everything on startup. File sizes are acceptable for this"""
@@ -73,6 +73,7 @@ class Transformer:
     def transform(self):
         STATION="STN"
         DATE="YYYYMMDD"
+        HOUR="HH"
         TEMP="T"
         T10N="T10N"
         # File starts with some commentary not starting with comment markers
@@ -84,6 +85,7 @@ class Transformer:
         try:
             col_station = headers.index(STATION)
             col_date = headers.index(DATE)
+            col_hour = headers.index(HOUR)
             col_temp = headers.index(TEMP)
             col_t10n = headers.index(T10N)
         except ValueError as e:
@@ -98,12 +100,13 @@ class Transformer:
             # Types of values: ints, int-like strings (such as dates) and int-like flags (0 or 1). Some values may be empty (empty string)
             station = values[col_station].strip()
             date = values[col_date]
+            hour = values[col_hour]
             temp_in = int(values[col_temp].strip()) # Temp in deci-degrees Celsius
             t10n_in_raw = values[col_t10n] # May be empty
             t10n_in = int(t10n_in_raw.strip()) if t10n_in_raw.strip() else None # T10n in deci-degrees Celsius
             if station != self._station:
                 raise ValueError("Incorrect station ID. Expected {} but found {} during day {}".format(self._station, station, date))
-            temp_diff = 10 * self._comparer.get_diff(date)
+            temp_diff = 10 * self._comparer.get_diff(date, hour)
             out_vals = values[:]
             temp_out = int(temp_in + temp_diff) # The difference may be floatified
             # Formatting: every column is right-justified to 5 characters, which is sufficient for every column except date
